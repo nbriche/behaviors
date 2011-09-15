@@ -113,7 +113,7 @@ class PluginBehaviorsConfig extends CommonDBTM {
          }
          // Version 0.2.0 - set_use_date_on_state now handle in GLPI
          if (FieldExists($table,'set_use_date_on_state')) {
-            $changes[] = "DROP `set_use_date_on_status`";
+            $changes[] = "DROP `set_use_date_on_state`";
          }
 
          if (count($changes)>0) {
