@@ -36,7 +36,7 @@ class PluginBehaviorsTicket {
       $config = PluginBehaviorsConfig::getInstance();
 
       if ($config->getField('add_notif')) {
-         Plugin::loadLang('inquests');
+         Plugin::loadLang('behaviors');
          $target->events['plugin_behaviors_ticketnewtech'] = $LANG['plugin_behaviors'][16];
          $target->events['plugin_behaviors_ticketnewgrp']  = $LANG['plugin_behaviors'][17];
       }
