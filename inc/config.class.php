@@ -85,6 +85,7 @@ class PluginBehaviorsConfig extends CommonDBTM {
                      `sql_tech_group_filter` varchar(255) default NULL,
                      `tickets_id_format` VARCHAR(15) NULL,
                      `remove_from_ocs` tinyint(1) NOT NULL default '0',
+                     `add_notif` tinyint(1) NOT NULL default '0',
                      `date_mod` datetime default NULL,
                      `comment` text,
                      PRIMARY KEY  (`id`)
@@ -111,9 +112,13 @@ class PluginBehaviorsConfig extends CommonDBTM {
          if (!FieldExists($table,'is_ticketdate_locked')) {
             $changes[] = "ADD `is_ticketdate_locked` tinyint(1) NOT NULL default '0'";
          }
-         // Version 0.2.0 - set_use_date_on_state now handle in GLPI
+         // Version 0.80.0 - set_use_date_on_state now handle in GLPI
          if (FieldExists($table,'set_use_date_on_state')) {
             $changes[] = "DROP `set_use_date_on_state`";
+         }
+         // Version 0.80.4 - feature #3171 additional notifications
+         if (!FieldExists($table,'add_notif')) {
+            $changes[] = "ADD `add_notif` tinyint(1) NOT NULL default '0'";
          }
 
          if (count($changes)>0) {
@@ -169,28 +174,26 @@ class PluginBehaviorsConfig extends CommonDBTM {
       echo "<td>".$LANG['plugin_behaviors'][3]."&nbsp;:</td><td>";
       echo "<input type='text' name='sql_user_group_filter' value='".
            htmlentities($config->fields['sql_user_group_filter'],ENT_QUOTES, 'UTF-8')."' size='25'>";
-      echo "</td><td colspan='2'>&nbsp;";
-      echo "</td></tr>";
-
-      echo "<tr class='tab_bg_1'>";
-      echo "<td>".$LANG['plugin_behaviors'][4]."&nbsp;:</td><td>";
-      echo "<input type='text' name='sql_tech_group_filter' value='".
-           htmlentities($config->fields['sql_tech_group_filter'],ENT_QUOTES, 'UTF-8')."' size='25'></td>";
-      echo "<td>".$LANG['plugin_behaviors'][11]."&nbsp;:</td><td>";
+      echo "</td><td>".$LANG['plugin_behaviors'][11]."&nbsp;:</td><td>";
       $plugin = new Plugin();
       if ($plugin->isActivated('uninstall')) {
          Dropdown::showYesNo('remove_from_ocs', $config->fields['remove_from_ocs']);
       } else {
          echo $LANG['plugin_behaviors'][12];
       }
+      echo "</td></tr>";
+
+      echo "<tr class='tab_bg_1'>";
+      echo "<td>".$LANG['plugin_behaviors'][4]."&nbsp;:</td><td>";
+      echo "<input type='text' name='sql_tech_group_filter' value='".
+           htmlentities($config->fields['sql_tech_group_filter'],ENT_QUOTES, 'UTF-8')."' size='25'>";
+      echo "</td><td colspan='2' class='tab_bg_2 b center'>".$LANG['setup'][704];     // Notifications
       echo "</td></tr>\n";
 
       echo "<tr class='tab_bg_1'>";
-      echo "<td colspan='2' class='tab_bg_2 b center'>".$LANG['job'][13]."</td>";
-      echo "<td rowspan='10' colspan='2' class='top'>".$LANG['common'][25]."&nbsp;:<br>";
-      echo "<textarea cols='60' rows='12' name='comment' >".$config->fields['comment']."</textarea>";
-      echo "<br>".$LANG['common'][26]."&nbsp;: ";
-      echo convDateTime($config->fields["date_mod"]);
+      echo "<td colspan='2' class='tab_bg_2 b center'>".$LANG['job'][13]."</td>";      // New ticket
+      echo "<td>".$LANG['plugin_behaviors'][15]."&nbsp;:</td><td>";
+      Dropdown::showYesNo('add_notif', $config->fields['add_notif']);
       echo "</td></tr>\n";
 
       echo "<tr class='tab_bg_1'>";
@@ -200,11 +203,16 @@ class PluginBehaviorsConfig extends CommonDBTM {
          $tab[$fmt] = date($fmt) . '  (' . $fmt . ')';
       }
       Dropdown::showFromArray("tickets_id_format", $tab, array('value' => $config->fields['tickets_id_format']));
+      echo "</td><td colspan='2' class='tab_bg_2 b center'>".$LANG['common'][25];           // Comments
       echo "</td></tr>";
 
       echo "<tr class='tab_bg_1'>";
       echo "<td>".$LANG['plugin_behaviors'][1]."&nbsp;:</td><td>";
       Dropdown::showYesNo("use_requester_item_group", $config->fields['use_requester_item_group']);
+      echo "</td><td rowspan='8' colspan='2' class='top'>";
+      echo "<textarea cols='60' rows='12' name='comment' >".$config->fields['comment']."</textarea>";
+      echo "<br>".$LANG['common'][26]."&nbsp;: ";
+      echo convDateTime($config->fields["date_mod"]);
       echo "</td></tr>";
 
       echo "<tr class='tab_bg_1'>";
