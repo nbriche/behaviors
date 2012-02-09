@@ -84,7 +84,7 @@ function plugin_version_behaviors() {
    global $LANG;
 
    return array('name'           => $LANG['plugin_behaviors'][0],
-                'version'        => '0.80.4',
+                'version'        => '0.80.6',
                 'author'         => 'Remi Collet',
                 'homepage'       => 'https://forge.indepnet.net/projects/behaviors',
                 'minGlpiVersion' => '0.80');// For compatibility / no install in version < 0.72
@@ -95,8 +95,8 @@ function plugin_version_behaviors() {
 function plugin_behaviors_check_prerequisites() {
 
    // Strict version check (could be less strict, or could allow various version)
-   if (version_compare(GLPI_VERSION,'0.80.4','lt') || version_compare(GLPI_VERSION,'0.81','ge')) {
-      echo "This plugin requires GLPI >= 0.80.4";
+   if (version_compare(GLPI_VERSION,'0.80.6','lt') || version_compare(GLPI_VERSION,'0.81','ge')) {
+      echo "This plugin requires GLPI >= 0.80.6";
       return false;
    }
    return true;
