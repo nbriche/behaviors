@@ -77,7 +77,6 @@ class PluginBehaviorsEntity extends CommonDBTM {
                      `sql_user_group_filter` varchar(255) default NULL,
                      `sql_tech_group_filter` varchar(255) default NULL,
                      `remove_from_ocs` tinyint(1) default NULL,
-                     `add_notif` tinyint(1) default NULL,
                      `date_mod` datetime default NULL,
                      PRIMARY KEY  (`id`)
                    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
@@ -179,8 +178,7 @@ class PluginBehaviorsEntity extends CommonDBTM {
 
       echo "<tr class='tab_bg_1'>";
       echo "<td colspan='2' class='tab_bg_2 b center'>".$LANG['job'][13]."</td>";      // New ticket
-      echo "<td>".$LANG['plugin_behaviors'][15]."&nbsp;:</td><td>";
-      $pbEntity->showYesNo('add_notif', $item->getID());
+      echo "<td colspan='2'>";
       echo "</td></tr>\n";
 
       echo "<tr class='tab_bg_1'>";
