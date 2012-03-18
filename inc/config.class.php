@@ -150,6 +150,8 @@ class PluginBehaviorsConfig extends CommonDBTM {
 
       if (get_class($item)=='Config') {
             return array(1 => $LANG['plugin_behaviors'][0]);
+      } else if (get_class($item)=='Entity') {
+            return array(1 => $LANG['plugin_behaviors'][0]);
       }
       return false;
    }
@@ -158,6 +160,8 @@ class PluginBehaviorsConfig extends CommonDBTM {
 
       if (get_class($item)=='Config') {
             return array(1 => array('PluginBehaviorsConfig', 'showConfigForm'));
+      } else if (get_class($item)=='Entity') {
+            return array(1 => array('PluginBehaviorsEntity', 'showConfigForm'));
       }
       return false;
    }

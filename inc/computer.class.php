@@ -48,9 +48,9 @@ class PluginBehaviorsComputer extends PluginBehaviorsCommon {
 
       // logDebug("PluginBehaviorsComputer::beforePurge(), Computer=", $comp);
 
-      $config = PluginBehaviorsConfig::getInstance();
+      $pbEntity = new PluginBehaviorsEntity();
 
-      if ($config->getField('remove_from_ocs')>0
+      if ($pbEntity->getValue("remove_from_ocs", $comp->getEntityID())>0
           && class_exists('PluginUninstallUninstall')) {
          PluginUninstallUninstall::deleteComputerInOCSByGlpiID($comp->fields['id']);
       }

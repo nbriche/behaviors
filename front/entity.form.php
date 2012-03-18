@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Id$
+ * @version $Id: config.form.php 68 2011-10-10 13:31:26Z remi $
  -------------------------------------------------------------------------
 
  LICENSE
@@ -21,34 +21,36 @@
  along with Behaviors. If not, see <http://www.gnu.org/licenses/>.
 
  @package   behaviors
- @author    Remi Collet
- @copyright Copyright (c) 2010-2011 Behaviors plugin team
+ @author    David Durieux
+ @copyright Copyright (c) 2010-2012 Behaviors plugin team
  @license   AGPL License 3.0 or (at your option) any later version
             http://www.gnu.org/licenses/agpl-3.0-standalone.html
  @link      https://forge.indepnet.net/projects/behaviors
  @link      http://www.glpi-project.org/
- @since     2010
+ @since     2012
 
  --------------------------------------------------------------------------
-*/
+ */
 
+define('GLPI_ROOT', '../../..');
+include (GLPI_ROOT . "/inc/includes.php");
 
-function plugin_behaviors_install() {
+// No autoload when plugin is not activated
+require_once('../inc/entity.class.php');
 
-   // No autoload when plugin is not activated
-   require 'inc/config.class.php';
+$pbEntity = new PluginBehaviorsEntity();
+if (isset($_POST["add"])) {
+   $pbEntity->check(-1, 'w', $_POST);
+   
+   $pbEntity->add($_POST);
 
-   PluginBehaviorsEntity::install();
-   return PluginBehaviorsConfig::install();
+   glpi_header($_SERVER['HTTP_REFERER']);
+} else if (isset($_POST["update"])) {
+   $pbEntity->check($_POST['id'],'w');
+
+   $pbEntity->update($_POST);
+
+   glpi_header($_SERVER['HTTP_REFERER']);
 }
-
-
-function plugin_behaviors_uninstall() {
-
-   // No autoload when plugin is not activated
-   require 'inc/config.class.php';
-
-   PluginBehaviorsEntity::uninstall();
-   return PluginBehaviorsConfig::uninstall();
-}
+glpi_header($CFG_GLPI["root_doc"]."/front/config.form.php?forcetab=behaviors_1");
 ?>

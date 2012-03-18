@@ -37,7 +37,7 @@ class PluginBehaviorsUser {
    static private function getUserGroup ($entity, $userid, $filter='') {
       global $DB;
 
-      $config = PluginBehaviorsConfig::getInstance();
+      $pbEntity = new PluginBehaviorsEntity();
 
       $query = "SELECT glpi_groups.id
                 FROM glpi_groups_users
@@ -45,7 +45,7 @@ class PluginBehaviorsUser {
                 WHERE glpi_groups_users.users_id='$userid'".
                 getEntitiesRestrictRequest(' AND ', 'glpi_groups', '', $entity, true);
 
-      $crit = ($filter ? $config->getField($filter) : '');
+      $crit = ($filter ? $pbEntity->getValue($filter, $entity) : '');
       if ($crit) {
          $query .= "AND ($crit)";
       }

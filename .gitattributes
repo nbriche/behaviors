@@ -1,2 +1,4 @@
 * text=auto !eol
 /LICENSE -text
+front/entity.form.php -text
+inc/entity.class.php -text

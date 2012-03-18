@@ -57,6 +57,7 @@ class PluginBehaviorsTicket {
 
       //logDebug("PluginBehaviorsTicket::beforeAdd(), Ticket=", $ticket);
       $config = PluginBehaviorsConfig::getInstance();
+      $pbEntity = new PluginBehaviorsEntity();
 
       if ($config->getField('tickets_id_format')) {
          $max = 0;
@@ -73,7 +74,7 @@ class PluginBehaviorsTicket {
 
       if (!isset($ticket->input['_auto_import'])
           && $_SESSION['glpiactiveprofile']['interface'] == 'central') {
-         if ($config->getField('is_requester_mandatory') && !$ticket->input['_users_id_requester']) {
+         if ($pbEntity->getValue("is_requester_mandatory", $ticket->getEntityID()) && !$ticket->input['_users_id_requester']) {
             addMessageAfterRedirect($LANG['plugin_behaviors'][13], true, ERROR);
             $ticket->input = array();
             return true;
@@ -81,7 +82,7 @@ class PluginBehaviorsTicket {
          }
       }
 
-      if ($config->getField('use_requester_item_group')
+      if ($pbEntity->getValue("use_requester_item_group", $ticket->getEntityID())
           && isset($ticket->input['itemtype'])
           && isset($ticket->input['items_id'])
           && $ticket->input['items_id']>0
@@ -104,7 +105,7 @@ class PluginBehaviorsTicket {
          }
       }
 
-      if ($config->getField('use_requester_user_group')
+      if ($pbEntity->getValue("use_requester_user_group", $ticket->getEntityID())
           && isset($ticket->input['_users_id_requester'])
           && $ticket->input['_users_id_requester']>0
           && (!isset($ticket->input['_groups_id_requester']) || $ticket->input['_groups_id_requester']<=0)) {
@@ -113,7 +114,7 @@ class PluginBehaviorsTicket {
                                                      $ticket->input['_users_id_requester']);
       }
 
-      if ($config->getField('use_assign_user_group')
+      if ($pbEntity->getValue("use_assign_user_group", $ticket->getEntityID())
           && isset($ticket->input['_users_id_assign'])
           && $ticket->input['_users_id_assign']>0
           && (!isset($ticket->input['_groups_id_assign']) || $ticket->input['_groups_id_assign']<=0)) {
@@ -135,6 +136,7 @@ class PluginBehaviorsTicket {
 
       //logDebug("PluginBehaviorsTicket::beforeUpdate(), Ticket=", $ticket);
       $config = PluginBehaviorsConfig::getInstance();
+      $pbEntity = new PluginBehaviorsEntity();
 
       // Check is the connected user is a tech
       if (!is_numeric(getLoginUserID(false)) || !haveRight('own_ticket',1)) {
@@ -142,7 +144,7 @@ class PluginBehaviorsTicket {
       }
 
       if (isset($ticket->input['date'])) {
-         if ($config->getField('is_ticketdate_locked')) {
+         if ($pbEntity->getValue("is_ticketdate_locked", $ticket->getEntityID())) {
             unset($ticket->input['date']);
          }
       }
@@ -162,7 +164,7 @@ class PluginBehaviorsTicket {
           || (isset($ticket->input['status'])
               && in_array($ticket->input['status'], array('solved', 'closed')))) {
 
-         if ($config->getField('is_ticketrealtime_mandatory')) {
+         if ($pbEntity->getValue("is_ticketrealtime_mandatory", $ticket->getEntityID())) {
             if (!$dur) {
                unset($ticket->input['status']);
                unset($ticket->input['solution']);
@@ -170,7 +172,7 @@ class PluginBehaviorsTicket {
                addMessageAfterRedirect($LANG['plugin_behaviors'][101], true, ERROR);
             }
          }
-         if ($config->getField('is_ticketsolutiontype_mandatory')) {
+         if ($pbEntity->getValue("is_ticketsolutiontype_mandatory", $ticket->getEntityID())) {
             if (!$sol) {
                unset($ticket->input['status']);
                unset($ticket->input['solution']);
@@ -194,8 +196,8 @@ class PluginBehaviorsTicket {
                  AND $_POST['id'] == 0
                  AND !isset($_GET['id'])) {
             
-            $config = PluginBehaviorsConfig::getInstance();
-            if ($config->getField('use_requester_user_group')
+            $pbEntity = new PluginBehaviorsEntity();
+            if ($pbEntity->getValue("use_requester_user_group", $_POST['entities_id'])
                 && isset($_POST['_users_id_requester'])
                 && $_POST['_users_id_requester']>0
                 && (!isset($_POST['_groups_id_requester']) || $_POST['_groups_id_requester']<=0)) {
