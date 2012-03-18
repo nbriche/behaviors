@@ -303,16 +303,16 @@ class PluginBehaviorsEntity extends CommonDBTM {
    function getValue($name, $entities_id) {
       global $DB;
       
-      $query = "SELECT * FROM `glpi_plugin_behaviors_entities`
+      $query = "SELECT `".$name."` FROM `glpi_plugin_behaviors_entities`
          WHERE `entities_id`='".$entities_id."'
+            AND `".$name."` IS NOT NULL
          LIMIT 1";
       $result = $DB->query($query);
       if ($DB->numrows($result) > 0) {
          $data = $DB->fetch_assoc($result);
          return $data[$name];
-      } else {
-         return $this->getValueAncestor($name, $entities_id);
       }
+      return $this->getValueAncestor($name, $entities_id);
    }
    
    
