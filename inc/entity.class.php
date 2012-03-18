@@ -125,8 +125,6 @@ class PluginBehaviorsEntity extends CommonDBTM {
       } else {
          $pbEntity->getEmpty();
          $hiddeninput = "<input type='hidden' name='entities_id' value='".$item->getID()."' />";
-         $pbEntity->fields['sql_user_group_filter'] = NULL;
-         $pbEntity->fields['sql_tech_group_filter'] = NULL;
       }
 
       $pbEntity->showFormHeader();
@@ -329,6 +327,8 @@ class PluginBehaviorsEntity extends CommonDBTM {
       $this->fields['sql_user_group_filter']             = NULL;
       $this->fields['sql_tech_group_filter']             = NULL;
       $this->fields['remove_from_ocs']                   = NULL;
+      $this->fields['sql_user_group_filter']             = NULL;
+      $this->fields['sql_tech_group_filter']             = NULL;
       
    }
    
