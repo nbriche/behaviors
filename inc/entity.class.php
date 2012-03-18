@@ -317,6 +317,22 @@ class PluginBehaviorsEntity extends CommonDBTM {
    
    
    
+   function post_getEmpty () {
+      
+      $this->fields['use_requester_item_group']          = NULL;
+      $this->fields['use_requester_user_group']          = NULL;
+      $this->fields['is_ticketsolutiontype_mandatory']   = NULL;
+      $this->fields['is_ticketrealtime_mandatory']       = NULL;
+      $this->fields['is_requester_mandatory']            = NULL;
+      $this->fields['is_ticketdate_locked']              = NULL;
+      $this->fields['use_assign_user_group']             = NULL;
+      $this->fields['sql_user_group_filter']             = NULL;
+      $this->fields['sql_tech_group_filter']             = NULL;
+      $this->fields['remove_from_ocs']                   = NULL;
+      
+   }
+   
+   
    
    function prepareInputForAdd($input) {
       global $LANG, $DB;
