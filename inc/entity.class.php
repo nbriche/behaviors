@@ -173,7 +173,7 @@ class PluginBehaviorsEntity extends CommonDBTM {
          echo htmlentities($pbEntity->getValueAncestor('sql_tech_group_filter', $item->getID()),ENT_QUOTES, 'UTF-8');
          echo "</font>";
       }
-      echo "</td><td colspan='2' class='tab_bg_2 b center'>".$LANG['setup'][704];     // Notifications
+      echo "</td><td colspan='2' class='tab_bg_2 b center'>";
       echo "</td></tr>\n";
 
       echo "<tr class='tab_bg_1'>";
