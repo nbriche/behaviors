@@ -39,6 +39,15 @@ include (GLPI_ROOT . "/inc/includes.php");
 require_once('../inc/entity.class.php');
 
 $pbEntity = new PluginBehaviorsEntity();
+
+foreach ($_POST as $key=>$value) {
+   if ($value == '+0') {
+      $_POST[$key] = 0;
+   } else if ($value == '+1') {
+      $_POST[$key] = 1;
+   }
+}
+
 if (isset($_POST["add"])) {
    $pbEntity->check(-1, 'w', $_POST);
    
