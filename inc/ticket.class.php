@@ -73,6 +73,7 @@ class PluginBehaviorsTicket {
       }
 
       if (!isset($ticket->input['_auto_import'])
+          && isset($_SESSION['glpiactiveprofile']['interface'])
           && $_SESSION['glpiactiveprofile']['interface'] == 'central') {
          if ($pbEntity->getValue("is_requester_mandatory", $ticket->getEntityID()) && !$ticket->input['_users_id_requester']) {
             addMessageAfterRedirect($LANG['plugin_behaviors'][13], true, ERROR);
@@ -184,9 +185,9 @@ class PluginBehaviorsTicket {
 
       //logDebug("PluginBehaviorsTicket::beforeUpdate(), Updated input=", $ticket->input);
    }
-   
-   
-   
+
+
+
    static function onNewTicket($item) {
       global $DB, $LANG;
 
@@ -195,7 +196,7 @@ class PluginBehaviorsTicket {
                  AND isset($_POST['id'])
                  AND $_POST['id'] == 0
                  AND !isset($_GET['id'])) {
-            
+
             $pbEntity = new PluginBehaviorsEntity();
             if ($pbEntity->getValue("use_requester_user_group", $_POST['entities_id'])
                 && isset($_POST['_users_id_requester'])
@@ -208,6 +209,6 @@ class PluginBehaviorsTicket {
          }
       }
    }
-   
+
 }
 ?>
