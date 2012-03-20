@@ -198,13 +198,32 @@ class PluginBehaviorsTicket {
                  AND $_POST['id'] == 0
                  AND !isset($_GET['id'])) {
 
+            $entities_id = $_POST['entities_id'];
+            //Get all the user's entities
+            $all_entities = Profile_User::getUserEntities($_POST["_users_id_requester"], true);
+            $userentities = array();
+            //For each user's entity, check if the technician which creates the ticket have access to it
+            foreach ($all_entities as $tmp => $ID_entity) {
+               if (haveAccessToEntity($ID_entity)) {
+                  $userentities[] = $ID_entity;
+               }
+            }
+            $countentitiesforuser = count($userentities);
+
+            if ($countentitiesforuser>0
+                && !in_array($_POST["entities_id"],$userentities)) {
+               // If entity is not in the list of user's entities,
+               // then use as default value the first value of the user's entites list
+               $entities_id = $userentities[0];
+            }
+            
             $pbEntity = new PluginBehaviorsEntity();
-            if ($pbEntity->getValue("use_requester_user_group", $_POST['entities_id'])
+            if ($pbEntity->getValue("use_requester_user_group", $entities_id)
                 && isset($_POST['_users_id_requester'])
                 && $_POST['_users_id_requester']>0
                 && (!isset($_POST['_groups_id_requester']) || $_POST['_groups_id_requester']<=0)) {
                $_REQUEST['_groups_id_requester']
-                  = PluginBehaviorsUser::getRequesterGroup($_POST['entities_id'],
+                  = PluginBehaviorsUser::getRequesterGroup($entities_id,
                                                            $_POST['_users_id_requester']);
             }
          }
