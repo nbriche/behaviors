@@ -187,16 +187,14 @@ class PluginBehaviorsTicket {
    }
 
 
-
    static function onNewTicket($item) {
-      global $DB, $LANG;
 
       if (isset($_SESSION['glpiactiveprofile']['interface'])
-          && $_SESSION['glpiactiveprofile']['interface'] == 'central') {
-         if (strstr($_SERVER['PHP_SELF'], "/front/ticket.form.php")
-                 AND isset($_POST['id'])
-                 AND $_POST['id'] == 0
-                 AND !isset($_GET['id'])) {
+          && $_SESSION['glpiactiveprofile']['interface'] == 'central'
+          && strstr($_SERVER['PHP_SELF'], "/front/ticket.form.php")) {
+         if (isset($_POST['id'])
+             AND $_POST['id'] == 0
+             AND !isset($_GET['id'])) {
 
             $entities_id = $_POST['entities_id'];
             //Get all the user's entities
@@ -216,16 +214,37 @@ class PluginBehaviorsTicket {
                // then use as default value the first value of the user's entites list
                $entities_id = $userentities[0];
             }
-            
+
             $pbEntity = new PluginBehaviorsEntity();
-            if ($pbEntity->getValue("use_requester_user_group", $entities_id)
+            if ($pbEntity->getValue('use_requester_user_group', $entities_id)
                 && isset($_POST['_users_id_requester'])
                 && $_POST['_users_id_requester']>0
-                && (!isset($_POST['_groups_id_requester']) || $_POST['_groups_id_requester']<=0)) {
-               $_REQUEST['_groups_id_requester']
-                  = PluginBehaviorsUser::getRequesterGroup($entities_id,
-                                                           $_POST['_users_id_requester']);
+                && (!isset($_POST['_groups_id_requester'])
+                    || $_POST['_groups_id_requester']<=0
+                    || (isset($_SESSION['glpi_behaviors_auto_group'])
+                        && $_SESSION['glpi_behaviors_auto_group']==$_POST['_groups_id_requester']))) {
+
+               // Select first group of this user
+               $grp = PluginBehaviorsUser::getRequesterGroup($_POST['entities_id'],
+                                                             $_POST['_users_id_requester']);
+               $_SESSION['glpi_behaviors_auto_group'] = $grp;
+               $_REQUEST['_groups_id_requester']      = $grp;
+
+            } else if ($pbEntity->getValue('use_requester_user_group', $entities_id)
+                && isset($_POST['_users_id_requester'])
+                && $_POST['_users_id_requester']<=0
+                && isset($_POST['_groups_id_requester'])
+                && isset($_SESSION['glpi_behaviors_auto_group'])
+                && $_SESSION['glpi_behaviors_auto_group']==$_POST['_groups_id_requester']) {
+
+               // clear user, so clear group
+               $_SESSION['glpi_behaviors_auto_group'] = 0;
+               $_REQUEST['_groups_id_requester']      = 0;
+            } else {
+               unset($_SESSION['glpi_behaviors_auto_group']);
             }
+         } else {
+            unset($_SESSION['glpi_behaviors_auto_group']);
          }
       }
    }
