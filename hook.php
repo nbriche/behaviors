@@ -36,19 +36,21 @@
 function plugin_behaviors_install() {
 
    // No autoload when plugin is not activated
+   require 'inc/entity.class.php';
    require 'inc/config.class.php';
 
-   PluginBehaviorsEntity::install();
-   return PluginBehaviorsConfig::install();
+   return PluginBehaviorsEntity::install()
+       && PluginBehaviorsConfig::install();
 }
 
 
 function plugin_behaviors_uninstall() {
 
    // No autoload when plugin is not activated
+   require 'inc/entity.class.php';
    require 'inc/config.class.php';
 
-   PluginBehaviorsEntity::uninstall();
-   return PluginBehaviorsConfig::uninstall();
+   return PluginBehaviorsEntity::uninstall()
+       && PluginBehaviorsConfig::uninstall();
 }
 ?>
