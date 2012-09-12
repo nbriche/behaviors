@@ -37,9 +37,9 @@ $LANG['plugin_behaviors'][0] = "Behaviours";
 // Config
 $LANG['plugin_behaviors'][1] = "Usa il gruppo degli elementi associati";
 $LANG['plugin_behaviors'][2] = "Usa il gruppo dei richiedenti";
-$LANG['plugin_behaviors'][3] = "SQL filter for requester's group";
-$LANG['plugin_behaviors'][4] = "SQL filter for technician's group";
-$LANG['plugin_behaviors'][5] = "Invalid SQL filter";
+$LANG['plugin_behaviors'][3] = "Filtro SQL per il gruppo del richiedente";
+$LANG['plugin_behaviors'][4] = "Filtro SQL per il gruppo del tecnico";
+$LANG['plugin_behaviors'][5] = "Filtro SQL non valido";
 $LANG['plugin_behaviors'][6] = "Usa il gruppo dei tecnici";
 $LANG['plugin_behaviors'][7] = "La durata è obbligatoria prima che la chiamata venga risolta/chiusa ";
 $LANG['plugin_behaviors'][8] = "Il Tipo di soluzione è obbligatorio prima che la chiamata venga risolta/chiusa";
