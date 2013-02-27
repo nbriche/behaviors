@@ -1,3 +1,15 @@
 * text=auto !eol
 /LICENSE -text
 inc/ticketsatisfaction.class.php -text
+locales/en_GB.mo -text
+locales/en_GB.po -text
+locales/fr_FR.mo -text
+locales/fr_FR.po -text
+locales/glpi.pot -text
+locales/it_IT.mo -text
+locales/it_IT.po -text
+locales/nl_NL.mo -text
+locales/nl_NL.po -text
+locales/pt_BR.mo -text
+locales/pt_BR.po -text
+/tools -text
