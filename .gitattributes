@@ -1,5 +1,6 @@
 * text=auto !eol
 /LICENSE -text
+inc/problem.class.php -text
 inc/ticketsatisfaction.class.php -text
 locales/en_GB.mo -text
 locales/en_GB.po -text
