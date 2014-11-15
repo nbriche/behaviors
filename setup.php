@@ -22,7 +22,7 @@
 
  @package   behaviors
  @author    Remi Collet
- @copyright Copyright (c) 2010-2013 Behaviors plugin team
+ @copyright Copyright (c) 2010-2014 Behaviors plugin team
  @license   AGPL License 3.0 or (at your option) any later version
             http://www.gnu.org/licenses/agpl-3.0-standalone.html
  @link      https://forge.indepnet.net/projects/behaviors
@@ -48,6 +48,7 @@ function plugin_init_behaviors() {
       'Printer'            => array('PluginBehaviorsPrinter',           'afterAdd'),
       'Ticket_User'        => array('PluginBehaviorsTicket_User',       'afterAdd'),
       'Group_Ticket'       => array('PluginBehaviorsGroup_Ticket',      'afterAdd'),
+      'Document_Item'      => array('PluginBehaviorsDocument_Item',     'afterAdd'),
    );
 
    $PLUGIN_HOOKS['item_update']['behaviors'] = array(
@@ -70,11 +71,16 @@ function plugin_init_behaviors() {
    );
 
    $PLUGIN_HOOKS['pre_item_update']['behaviors'] = array(
-      'Ticket'    => array('PluginBehaviorsTicket',   'beforeUpdate')
+      'Problem'    => array('PluginBehaviorsProblem', 'beforeUpdate'),
+      'Ticket'     => array('PluginBehaviorsTicket',  'beforeUpdate')
    );
 
    $PLUGIN_HOOKS['pre_item_purge']['behaviors'] = array(
       'Computer'           => array('PluginBehaviorsComputer',          'beforePurge'),
+   );
+
+   $PLUGIN_HOOKS['item_purge']['behaviors'] = array(
+      'Document_Item'      => array('PluginBehaviorsDocument_Item',     'afterPurge'),
    );
 
    // Notifications
@@ -90,7 +96,7 @@ function plugin_init_behaviors() {
 function plugin_version_behaviors() {
 
    return array('name'           => __('Behaviours', 'behaviors'),
-                'version'        => '0.84',
+                'version'        => '0.84.3',
                 'license'        => 'AGPLv3+',
                 'author'         => 'Remi Collet, Nelly Mahu-Lasson',
                 'homepage'       => 'https://forge.indepnet.net/projects/behaviors',
