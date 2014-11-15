@@ -22,7 +22,7 @@
 
  @package   behaviors
  @author    Remi Collet
- @copyright Copyright (c) 2010-2013 Behaviors plugin team
+ @copyright Copyright (c) 2010-2014 Behaviors plugin team
  @license   AGPL License 3.0 or (at your option) any later version
             http://www.gnu.org/licenses/agpl-3.0-standalone.html
  @link      https://forge.indepnet.net/projects/behaviors
@@ -44,8 +44,6 @@ class PluginBehaviorsTicket {
          $target->events['plugin_behaviors_ticketnewtech'] = __('Assign to a technician', 'behaviors');
          $target->events['plugin_behaviors_ticketnewgrp']  = __('Assign to a group', 'behaviors');
          $target->events['plugin_behaviors_ticketreopen']  = __('Reopen ticket', 'behaviors');
-         $target->events['plugin_behaviors_replysurvey']   = __('Reply to satisfaction survey',
-                                                                'behaviors');
          PluginBehaviorsDocument_Item::addEvents($target);
       }
    }
@@ -166,13 +164,12 @@ class PluginBehaviorsTicket {
                                                          true);
          } else {
             // All groups
-            $ticket->input['_additional_groups_assigns"']
+            $ticket->input['_additional_groups_assigns']
                = PluginBehaviorsUser::getTechnicianGroup($ticket->input['entities_id'],
                                                          $ticket->input['_users_id_assign'],
                                                          false);
          }
       }
-      // Toolbox::logDebug("PluginBehaviorsTicket::afterPrepareAdd(), Updated input=", $ticket->input);
    }
 
 
@@ -188,7 +185,7 @@ class PluginBehaviorsTicket {
 
       // Check is the connected user is a tech
       if (!is_numeric(Session::getLoginUserID(false))
-          || !Session::haveRight('own_ticket',1)) {
+          || !Session::haveRight('ticket', Ticket::OWN)) {
          return false; // No check
       }
 
@@ -200,7 +197,7 @@ class PluginBehaviorsTicket {
 
       if (isset($ticket->input['_read_date_mod'])
           && $config->getField('use_lock')
-          && $ticket->input['_read_date_mod']!=$ticket->fields['date_mod']) {
+          && ($ticket->input['_read_date_mod'] != $ticket->fields['date_mod'])) {
 
          $msg = sprintf(__('%1$s (%2$s)'), __("Can't save, item have been updated", "behaviors"),
                            getUserName($ticket->fields['users_id_lastupdater']).', '.
@@ -210,12 +207,18 @@ class PluginBehaviorsTicket {
          return $ticket->input = false;
       }
 
-      $sol = (isset($ticket->input['solutiontypes_id'])
-                    ? $ticket->input['solutiontypes_id']
-                    : $ticket->fields['solutiontypes_id']);
-      $dur = (isset($ticket->input['actiontime'])
-                    ? $ticket->input['actiontime']
-                    : $ticket->fields['actiontime']);
+      $soltyp  = (isset($ticket->input['solutiontypes_id'])
+                        ? $ticket->input['solutiontypes_id']
+                        : $ticket->fields['solutiontypes_id']);
+      $dur     = (isset($ticket->input['actiontime'])
+                        ? $ticket->input['actiontime']
+                        : $ticket->fields['actiontime']);
+      $soldesc = (isset($ticket->input['solution'])
+                        ? $ticket->input['solution']
+                        : $ticket->fields['solution']);
+      $cat    = (isset($ticket->input['itilcategories_id'])
+                        ? $ticket->input['itilcategories_id']
+                        : $ticket->fields['itilcategories_id']);
 
       // Wand to solve/close the ticket
       if ((isset($ticket->input['solutiontypes_id']) && $ticket->input['solutiontypes_id'])
@@ -235,7 +238,7 @@ class PluginBehaviorsTicket {
             }
          }
          if ($config->getField('is_ticketsolutiontype_mandatory')) {
-            if (!$sol) {
+            if (!$soltyp) {
                unset($ticket->input['status']);
                unset($ticket->input['solution']);
                unset($ticket->input['solutiontypes_id']);
@@ -243,9 +246,26 @@ class PluginBehaviorsTicket {
                                                    'behaviors'), true, ERROR);
             }
          }
-      }
+         if ($config->getField('is_ticketsolution_mandatory')) {
+            if (!$soldesc) {
+               unset($ticket->input['status']);
+               unset($ticket->input['solution']);
+               unset($ticket->input['solutiontypes_id']);
+               Session::addMessageAfterRedirect(__('You cannot close a ticket without solution description',
+                                                   'behaviors'), true, ERROR);
+            }
+         }
+         if ($config->getField('is_ticketcategory_mandatory')) {
+            if (!$cat) {
+               unset($ticket->input['status']);
+               unset($ticket->input['solution']);
+               unset($ticket->input['solutiontypes_id']);
+               Session::addMessageAfterRedirect(__("You cannot close a ticket without ticket's category",
+                                                   'behaviors'), true, ERROR);
+            }
+         }
 
-      //Toolbox::logDebug("PluginBehaviorsTicket::beforeUpdate(), Updated input=", $ticket->input);
+      }
    }
 
 
@@ -300,7 +320,7 @@ class PluginBehaviorsTicket {
       // Toolbox::logDebug("PluginBehaviorsTicket::afterUpdate(), Ticket=", $ticket);
 
       $config = PluginBehaviorsConfig::getInstance();
-      
+
       if ($config->getField('add_notif')
           && in_array('status', $ticket->updates)
           && in_array($ticket->oldvalues['status'],
