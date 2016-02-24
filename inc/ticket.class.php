@@ -43,6 +43,7 @@ class PluginBehaviorsTicket {
          Plugin::loadLang('behaviors');
          $target->events['plugin_behaviors_ticketnewtech'] = __('Assign to a technician', 'behaviors');
          $target->events['plugin_behaviors_ticketnewgrp']  = __('Assign to a group', 'behaviors');
+         $target->events['plugin_behaviors_ticketnewsupp'] = __('Assign to a supplier', 'behaviors');
          $target->events['plugin_behaviors_ticketreopen']  = __('Reopen ticket', 'behaviors');
          PluginBehaviorsDocument_Item::addEvents($target);
       }
@@ -319,7 +320,7 @@ class PluginBehaviorsTicket {
             } else {
                unset($_SESSION['glpi_behaviors_auto_group']);
             }
-         } else {
+         } else if (strstr($_SERVER['PHP_SELF'], "/front/ticket.form.php")) {
             unset($_SESSION['glpi_behaviors_auto_group']);
          }
       }
