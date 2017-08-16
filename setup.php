@@ -22,7 +22,7 @@
 
  @package   behaviors
  @author    Remi Collet, Nelly Mahu-Lasson
- @copyright Copyright (c) 2010-2016 Behaviors plugin team
+ @copyright Copyright (c) 2010-2017 Behaviors plugin team
  @license   AGPL License 3.0 or (at your option) any later version
             http://www.gnu.org/licenses/agpl-3.0-standalone.html
  @link      https://forge.glpi-project.org/projects/behaviors
@@ -82,22 +82,33 @@ function plugin_init_behaviors() {
    // Notifications
    $PLUGIN_HOOKS['item_get_events']['behaviors'] =
          array('NotificationTargetTicket' => array('PluginBehaviorsTicket', 'addEvents'));
+   $PLUGIN_HOOKS['item_add_targets']['behaviors'] =
+         array('NotificationTargetTicket' => array('PluginBehaviorsTicket', 'addTargets'));
+   $PLUGIN_HOOKS['item_action_targets']['behaviors'] =
+   array('NotificationTargetTicket' => array('PluginBehaviorsTicket', 'addActionTargets'));
 
    // End init, when all types are registered
    $PLUGIN_HOOKS['post_init']['behaviors'] = array('PluginBehaviorsCommon', 'postInit');
 
    $PLUGIN_HOOKS['csrf_compliant']['behaviors'] = true;
+
+   foreach ($CFG_GLPI["asset_types"] as $type) {
+      $PLUGIN_HOOKS['item_can']['behaviors'] = array($type => array('PluginBehaviorsConfig', 'item_can'));
+   }
+
+   $PLUGIN_HOOKS['add_default_where']['behaviors'] = array('PluginBehaviorsConfig', 'add_default_where');
+
 }
 
 
 function plugin_version_behaviors() {
 
    return array('name'           => __('Behaviours', 'behaviors'),
-                'version'        => '1.2',
+                'version'        => '1.5.0',
                 'license'        => 'AGPLv3+',
                 'author'         => 'Remi Collet, Nelly Mahu-Lasson',
                 'homepage'       => 'https://forge.glpi-project.org/projects/behaviors',
-                'minGlpiVersion' => '9.1');// For compatibility / no install in version < 0.72
+                'minGlpiVersion' => '9.1.5');// For compatibility / no install in version < 0.72
 }
 
 
