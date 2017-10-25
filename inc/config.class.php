@@ -100,6 +100,7 @@ class PluginBehaviorsConfig extends CommonDBTM {
                      `single_tech_mode` int(11) NOT NULL default '0',
                      `myasset` tinyint(1) NOT NULL default '0',
                      `groupasset` tinyint(1) NOT NULL default '0',
+                     `is_tickettasktodo` tinyint(1) NOT NULL default '0',
                      `date_mod` datetime default NULL,
                      `comment` text,
                      PRIMARY KEY  (`id`)
@@ -160,7 +161,10 @@ class PluginBehaviorsConfig extends CommonDBTM {
          $mig->addField($table, 'myasset', 'bool', ['after' => 'single_tech_mode']);
 
          // Version 1.5.1 - config for clone #5531
-         $mig->addField($table, 'clone', 'bool');
+         $mig->addField($table, 'clone', 'bool', ['after' => 'groupasset']);
+
+         // Version 1.6.0
+         $mig->addField($table, 'is_tickettasktodo', 'bool', ['after' => 'clone']);
       }
 
       return true;
@@ -252,8 +256,6 @@ class PluginBehaviorsConfig extends CommonDBTM {
       Dropdown::showYesNo('clone', $config->fields['clone']);
       echo "</td></tr>";
 
-
-      echo "</td><td colspan='2' class='tab_bg_2 b center'>".__('Comments');
       echo "<tr class='tab_bg_1'>";
       echo "<td>".__('Duration is mandatory before ticket is solved/closed', 'behaviors')."</td><td>";
       Dropdown::showYesNo("is_ticketrealtime_mandatory",
@@ -318,6 +320,12 @@ class PluginBehaviorsConfig extends CommonDBTM {
       Dropdown::showFromArray('single_tech_mode', $tab,
                               ['value' => $config->fields['single_tech_mode']]);
       echo "</td><td colspan='2'></td></tr>";
+
+      echo "<tr class='tab_bg_1'>";
+      echo "<td>".__('Block the solving/closing of a the ticket if task do to', 'behaviors');
+      echo "</td><td>";
+      Dropdown::showYesNo("is_tickettasktodo", $config->fields['is_tickettasktodo']);
+      echo "</td></tr>";
 
       echo "<tr class='tab_bg_1'>"; // Problem - Update
       echo "<td colspan=2' class='tab_bg_2 b center'>".__('Update of a problem')."</td></tr>";
@@ -412,11 +420,13 @@ class PluginBehaviorsConfig extends CommonDBTM {
          $table  = getTableForItemType($itemtype);
          if ($config->getField('myasset')) {
             $condition .= "(`".$table."`.`users_id` = ".Session::getLoginUserID().")";
-            if ($config->getField('groupasset')) {
+            if ($config->getField('groupasset')
+                && count($_SESSION["glpigroups"])) {
                $condition .= " OR ";
             }
          }
-         if ($config->getField('groupasset')) {
+         if ($config->getField('groupasset')
+             && count($_SESSION["glpigroups"])) {
             $condition .= " (`".$table."`.`groups_id` IN ('".implode("','", $_SESSION["glpigroups"])."'))";
          }
       }
@@ -433,11 +443,13 @@ class PluginBehaviorsConfig extends CommonDBTM {
          if (count($filtre)) {
             if ($config->getField('myasset')) {
                $condition .= " (`asset_types`.`users_id` = ".Session::getLoginUserID().")";
-               if ($config->getField('groupasset')) {
+               if ($config->getField('groupasset')
+                   && count($_SESSION["glpigroups"])) {
                   $condition .= " OR ";
                }
             }
-            if ($config->getField('groupasset')) {
+            if ($config->getField('groupasset')
+                && count($_SESSION["glpigroups"])) {
                $condition .= " (`asset_types`.`groups_id` IN ('".implode("','", $_SESSION["glpigroups"])."'))";
             }
          }
