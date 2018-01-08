@@ -100,6 +100,7 @@ class PluginBehaviorsConfig extends CommonDBTM {
                      `single_tech_mode` int(11) NOT NULL default '0',
                      `myasset` tinyint(1) NOT NULL default '0',
                      `groupasset` tinyint(1) NOT NULL default '0',
+                     `clone` tinyint(1) NOT NULL default '0',
                      `is_tickettasktodo` tinyint(1) NOT NULL default '0',
                      `date_mod` datetime default NULL,
                      `comment` text,
